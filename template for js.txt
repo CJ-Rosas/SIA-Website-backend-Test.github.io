@@ -1,0 +1,71 @@
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+const supabaseUrl = 'https://your-project-id.supabase.co'
+const supabaseAnonKey = 'your-anon-public-key'
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// ----------------------------------------------------
+// FETCH DATA (READ)
+// ----------------------------------------------------
+export async function fetchData() {
+  const { data, error } = await supabase
+    .from('your_table_name') // Replace with your Supabase table name
+    .select('*')             // Select all columns (or specify: 'id, title, status')
+    .order('created_at', { ascending: false }) // Optional: sort results
+
+  if (error) {
+    alert('Error fetching data: ' + error.message)
+    return []
+  }
+  return data
+}
+
+// ----------------------------------------------------
+// SEND DATA (CREATE / INSERT)
+// ----------------------------------------------------
+export async function sendData(newDataObject) {
+  const { data, error } = await supabase
+    .from('your_table_name')
+    .insert([newDataObject]) // Must pass an array containing object(s)
+    .select()                // Returns the newly inserted record
+
+  if (error) {
+    alert('Error saving data: ' + error.message)
+    return null
+  }
+  return data
+}
+
+// ----------------------------------------------------
+// UPDATE DATA
+// ----------------------------------------------------
+export async function updateData(id, updatedFieldsObject) {
+  const { data, error } = await supabase
+    .from('your_table_name')
+    .update(updatedFieldsObject)
+    .eq('id', id) // Targets the row matching this ID
+    .select()
+
+  if (error) {
+    alert('Error updating data: ' + error.message)
+    return null
+  }
+  return data
+}
+
+// ----------------------------------------------------
+// DELETE DATA
+// ----------------------------------------------------
+export async function deleteData(id) {
+  const { error } = await supabase
+    .from('your_table_name')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    alert('Error deleting data: ' + error.message)
+    return false
+  }
+  return true
+}
